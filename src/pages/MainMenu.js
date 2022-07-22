@@ -55,6 +55,9 @@ class MainMenu extends Lightning.Component {
         PlayItem: {
           type: Button,
           title: "Play",
+          signals: {
+            buttonPressed: "_playItemSignal",
+          },
         },
 
         HighscoreItem: {
@@ -62,6 +65,9 @@ class MainMenu extends Lightning.Component {
           title: "Highscore",
           flexItem: {
             marginTop: styles.spacing.medium,
+          },
+          signals: {
+            buttonPressed: "_highscoreItemSignal",
           },
         },
       },
@@ -80,6 +86,14 @@ class MainMenu extends Lightning.Component {
 
   _handleUp() {
     this._index = 0;
+  }
+
+  _playItemSignal() {
+    Router.navigate("game");
+  }
+
+  _highscoreItemSignal() {
+    Router.navigate("highscore");
   }
 }
 
