@@ -26,6 +26,11 @@ class Game extends Lightning.Component {
           text: "Score: 0",
           textAlign: "right",
         },
+        shader: {
+          type: Lightning.shaders.LinearBlur,
+          x: 0,
+          y: 0,
+        },
       },
     };
   }
@@ -52,18 +57,18 @@ class Game extends Lightning.Component {
 
     children.push({
       Food: {
-      x: food.x * this.cellSize + this.tailItemPadding,
-      y: food.y * this.cellSize + this.tailItemPadding,
-      w: this.itemSize,
-      h: this.itemSize,
+        x: food.x * this.cellSize + this.tailItemPadding,
+        y: food.y * this.cellSize + this.tailItemPadding,
+        w: this.itemSize,
+        h: this.itemSize,
 
-      rect: true,
-      color: Colors(food.color).get(),
-      shader: {
-        type: Lightning.shaders.Perspective, 
-        rx: 0,
-      }
-    }
+        rect: true,
+        color: Colors(food.color).get(),
+        shader: {
+          type: Lightning.shaders.Perspective,
+          rx: 0,
+        },
+      },
     });
 
     this.tag("GameItems").children = children;
@@ -78,14 +83,14 @@ class Game extends Lightning.Component {
 
   // Hint: Use this method to start the game
   startGame() {
-    this.game = new GameEngine();
+    this.game = new GameEngine(this._eatHandler.bind(this));
     this.game.setup();
     this.renderGame = this.renderGame.bind(this);
     this.gameEndHandler = this.gameEndHandler.bind(this);
     this.game.onUpdate(this.renderGame);
     this.game.onGameEnd(this.gameEndHandler);
     this.game.enableGameLoop();
-    this._animationDemo.start();
+    this._foodRotation.start();
   }
 
   // Hint: Use this method to stop the game
@@ -93,16 +98,57 @@ class Game extends Lightning.Component {
     if (this.game) {
       this.game.disableGameLoop();
       this.game = null;
-      this._animationDemo.stop();
+      this._foodRotation.stop();
     }
   }
 
   _init() {
     const rotate90 = Math.PI * 0.5;
 
-    this._animationDemo = this.animation({duration: 2, repeat: -1, actions: [
-      {t: 'Food' ,p: 'shader.rx', v: {0: 0, 0.25: rotate90, 0.5: rotate90 * 2, 0.75: rotate90 * 3, 1: rotate90 * 4}},
-  ]});
+    this._foodRotation = this.animation({
+      duration: 2,
+      repeat: -1,
+      actions: [
+        {
+          t: "Food",
+          p: "shader.rx",
+          v: {
+            0: 0,
+            0.25: rotate90,
+            0.5: rotate90 * 2,
+            0.75: rotate90 * 3,
+            1: rotate90 * 4,
+          },
+        },
+      ],
+    });
+
+    this._scoreBlur = this.animation({
+      duration: 0.4,
+      repeat: 0,
+      actions: [
+        {
+          t: "Score",
+          p: "shader.x",
+          v: {
+            0: 0,
+            0.33: (Math.random() * 200) - 100,
+            0.66: (Math.random() * 200) - 100,
+            1: 0,
+          },
+        },
+        {
+          t: "Score",
+          p: "shader.y",
+          v: {
+            0: 0,
+            0.33: (Math.random() * 200) - 100,
+            0.66: (Math.random() * 200) - 100,
+            1: 0,
+          },
+        },
+      ],
+    });
   }
 
   _active() {
@@ -127,6 +173,10 @@ class Game extends Lightning.Component {
 
   _handleRight() {
     this.game.handle(Directions.RIGHT);
+  }
+
+  _eatHandler() {
+    this._scoreBlur.start();
   }
 }
 

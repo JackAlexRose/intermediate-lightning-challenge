@@ -8,8 +8,9 @@ export const Directions = {
 };
 
 export default class GameEngine {
-  constructor() {
+  constructor(eatHandler) {
     this.gameLoop = this.gameLoop.bind(this);
+    this._eatHandler = eatHandler;
   }
 
   gameLoop(currentTimestamp) {
@@ -75,6 +76,7 @@ export default class GameEngine {
 
     if (snakeHead.x === this.food.x && snakeHead.y === this.food.y) {
       this.snake.eat(this.food);
+      this._eatHandler();
     }
 
     if (this.snake.isDead) {
