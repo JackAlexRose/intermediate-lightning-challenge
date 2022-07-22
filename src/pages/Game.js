@@ -51,6 +51,7 @@ class Game extends Lightning.Component {
     });
 
     children.push({
+      Food: {
       x: food.x * this.cellSize + this.tailItemPadding,
       y: food.y * this.cellSize + this.tailItemPadding,
       w: this.itemSize,
@@ -58,6 +59,11 @@ class Game extends Lightning.Component {
 
       rect: true,
       color: Colors(food.color).get(),
+      shader: {
+        type: Lightning.shaders.Perspective, 
+        rx: 0,
+      }
+    }
     });
 
     this.tag("GameItems").children = children;
@@ -79,6 +85,7 @@ class Game extends Lightning.Component {
     this.game.onUpdate(this.renderGame);
     this.game.onGameEnd(this.gameEndHandler);
     this.game.enableGameLoop();
+    this._animationDemo.start();
   }
 
   // Hint: Use this method to stop the game
@@ -86,7 +93,16 @@ class Game extends Lightning.Component {
     if (this.game) {
       this.game.disableGameLoop();
       this.game = null;
+      this._animationDemo.stop();
     }
+  }
+
+  _init() {
+    const rotate90 = Math.PI * 0.5;
+
+    this._animationDemo = this.animation({duration: 2, repeat: -1, actions: [
+      {t: 'Food' ,p: 'shader.rx', v: {0: 0, 0.25: rotate90, 0.5: rotate90 * 2, 0.75: rotate90 * 3, 1: rotate90 * 4}},
+  ]});
   }
 
   _active() {
