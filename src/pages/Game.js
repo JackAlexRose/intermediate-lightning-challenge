@@ -106,7 +106,7 @@ class Game extends Lightning.Component {
     const rotate90 = Math.PI * 0.5;
 
     this._foodRotation = this.animation({
-      duration: 2,
+      duration: 1,
       repeat: -1,
       actions: [
         {
@@ -114,12 +114,20 @@ class Game extends Lightning.Component {
           p: "shader.rx",
           v: {
             0: 0,
-            0.25: rotate90,
-            0.5: rotate90 * 2,
-            0.75: rotate90 * 3,
-            1: rotate90 * 4,
+            0.5: rotate90,
+            1: rotate90 * 2,
           },
         },
+        {
+          t: "Food",
+          p: "color",
+          v: {
+            0: Colors("orange").get(),
+            0.5: Colors("orange").darker(0.6).get(),
+            0.51: Colors("orange").lighter(0.2).get(),
+            1: Colors("orange").get(),
+          },
+        }
       ],
     });
 
