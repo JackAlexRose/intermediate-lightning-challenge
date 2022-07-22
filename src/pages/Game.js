@@ -89,6 +89,14 @@ class Game extends Lightning.Component {
     }
   }
 
+  _active() {
+    this.startGame();
+  }
+
+  _inactive() {
+    this.endGame();
+  }
+
   _handleUp() {
     this.game.handle(Directions.UP);
   }
